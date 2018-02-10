@@ -45,13 +45,13 @@ get '/:id' => sub {
   my $c = shift;
 	my $id = $c->stash('id');
 
-	my $rendermsg;
+	my $rendermsg; # A scalar ref containing the string that will be rendered 
 
 	try {
 		$rendermsg = retrieve(DATA_DIR . $id);
 	}
 	catch {
-		$rendermsg = "$id doesn't exist.";
+		$rendermsg = \"$id doesn't exist.";
 	};
   $c->render(text=>$$rendermsg);
 };
