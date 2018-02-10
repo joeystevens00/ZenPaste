@@ -16,11 +16,11 @@ use Sys::Hostname;
 use Try::Tiny;
 
 use constant DATA_DIR => 'data/';
-use constant BIND_PORT => '3000';
-use constant PROTO => 'http://';
-use constant SERVER_ADDR => ( $ENV{'ZEN_PASTE_BIND_ADDR'} || PROTO . hostname() . ':' . BIND_PORT || '127.0.0.1:3000');
+use constant BIND_PORT => (  $ENV{'ZEN_PASTE_URL_PORT'} || '3000' );
+use constant PROTO => (  $ENV{'ZEN_PASTE_URL_PROTO'} || 'http://' );
+use constant SERVER_ADDR => ( $ENV{'ZEN_PASTE_URL_HOSTNAME'} || PROTO . hostname() . ':' . BIND_PORT );
 
-mkdir DATA_DIR or die "Couldn't create data dir" unless -e DATA_DIR; # Ensure data dir exists
+mkdir (DATA_DIR or die "Couldn't create data dir") unless -e DATA_DIR; # Ensure data dir exists
 my @tmp;
 
 # load up our existing $files if any
