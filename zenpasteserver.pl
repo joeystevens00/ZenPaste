@@ -25,13 +25,11 @@ my @tmp;
 
 # load up our existing $files if any
 try {
-	opendir DIR, DATA_DIR;
-	@tmp = grep { $_ !~ /\.|\.\./ } readdir DIR;
-	closedir DIR;
+  opendir DIR, DATA_DIR;
+  @tmp = grep { $_ !~ /\.|\.\./ } readdir DIR;
+  closedir DIR;
 }
-catch {
-	warn "Cannot opendir: $_";
-};
+catch { warn "Cannot opendir: $_" };
 my $files = scalar @tmp > 0 ? \@tmp : [];
 
 # Documentation browser under "/perldoc"
@@ -43,27 +41,20 @@ sub getLatestFile { scalar @$files > 0 ? $files->[-1] : 0 };
 
 get '/:id' => sub {
   my $c = shift;
-	my $id = $c->stash('id');
-
-	my $rendermsg;
-
-	try {
-		$rendermsg = retrieve(DATA_DIR . $id);
-	}
-	catch {
-		$rendermsg = "$id doesn't exist.";
-	};
+  my $id = $c->stash('id');
+  my $rendermsg; # A scalar ref containing the string that will be rendered
+  try { $rendermsg = retrieve(DATA_DIR . $id) }
+  catch { $rendermsg = \"$id doesn't exist." };
   $c->render(text=>$$rendermsg);
 };
 
 post '/new' => sub {
-	my $c = shift;
-	my $data = $c->req->body;
-	my $file = getLatestFile()+1;
-	push @$files, $file;
-	store \$data, DATA_DIR . $file; # Store the file
-	$c->render(text=>SERVER_ADDR . '/' . $file); # Return the address of the file
-
+  my $c = shift;
+  my $data = $c->req->body;
+  my $file = getLatestFile()+1;
+  push @$files, $file;
+  store \$data, DATA_DIR . $file; # Store the file
+  $c->render(text=>SERVER_ADDR . '/' . $file); # Return the address of the file
 };
 
 app->start;
